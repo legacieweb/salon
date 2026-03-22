@@ -1,0 +1,20 @@
+# Render Blueprint for Luxe Salon React App
+# https://render.com/docs/blueprints
+
+services:
+  - type: static
+    name: luxe-salon
+    # Branch to deploy
+    branch: main
+    # Build command
+    buildCommand: npm run build
+    # Output directory from build
+    publishDir: dist
+    # Auto-deploy on every push
+    autoDeploy: true
+    # Environment variables (optional)
+    envVars:
+      - key: NODE_VERSION
+        value: "18"
+      - key: NPM_VERSION
+        value: "9"
