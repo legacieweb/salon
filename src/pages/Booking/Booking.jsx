@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { servicesData, staffData } from '../../data';
@@ -8,6 +8,7 @@ const Booking = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { user, login, signup } = useAuth();
+  const bookingRef = useRef(null);
   
   const [step, setStep] = useState(1);
   const [selectedServices, setSelectedServices] = useState([]);
@@ -78,6 +79,26 @@ const Booking = () => {
   const handleContinueToStaff = () => {
     setShowAddServiceModal(false);
     setStep(2);
+  };
+
+  // Scroll to booking section when step changes
+  useEffect(() => {
+    const bookingSection = document.getElementById('booking-content');
+    if (bookingSection) {
+      setTimeout(() => {
+        bookingSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  }, [step]);
+
+  // Scroll to action buttons when selection is made
+  const scrollToActions = () => {
+    const actions = document.getElementById('booking-actions');
+    if (actions) {
+      setTimeout(() => {
+        actions.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
+    }
   };
 
   const timeSlots = [
@@ -340,7 +361,7 @@ const Booking = () => {
       {/* Booking Form */}
       <section className="section booking-form-section">
         <div className="container">
-          <div className="booking-content">
+          <div className="booking-content" id="booking-content">
             {/* Step 1: Select Services */}
             {step === 1 && (
               <div className="booking-step">
@@ -351,7 +372,7 @@ const Booking = () => {
                     <div
                       key={service.id}
                       className={`service-select-card ${selectedServices.find(s => s.id === service.id) ? 'selected' : ''}`}
-                      onClick={() => addService(service)}
+                      onClick={() => { addService(service); scrollToActions(); }}
                     >
                       <img src={service.image} alt={service.name} />
                       <div className="service-select-info">
@@ -424,7 +445,7 @@ const Booking = () => {
                     <div
                       key={staff.id}
                       className={`staff-select-card ${selectedStaff?.id === staff.id ? 'selected' : ''}`}
-                      onClick={() => setSelectedStaff(staff)}
+                      onClick={() => { setSelectedStaff(staff); scrollToActions(); }}
                     >
                       <img src={staff.image} alt={staff.name} />
                       <div className="staff-select-info">
@@ -450,7 +471,7 @@ const Booking = () => {
                         <button
                           key={date.value}
                           className={`date-select-btn ${selectedDate === date.value ? 'selected' : ''}`}
-                          onClick={() => setSelectedDate(date.value)}
+                          onClick={() => { setSelectedDate(date.value); scrollToActions(); }}
                         >
                           {date.label}
                         </button>
@@ -464,7 +485,7 @@ const Booking = () => {
                         <button
                           key={time}
                           className={`time-select-btn ${selectedTime === time ? 'selected' : ''}`}
-                          onClick={() => setSelectedTime(time)}
+                          onClick={() => { setSelectedTime(time); scrollToActions(); }}
                         >
                           {time}
                         </button>
@@ -589,7 +610,7 @@ const Booking = () => {
             )}
 
             {/* Navigation Buttons */}
-            <div className="booking-nav">
+            <div className="booking-nav" id="booking-actions">
               {step > 1 && (
                 <button className="btn btn-secondary" onClick={prevStep}>Back</button>
               )}
